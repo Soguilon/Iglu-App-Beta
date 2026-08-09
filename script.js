@@ -6,44 +6,225 @@
  * It never uses google.script.run / google.script.host / google.script.url.
  * ------------------------------------------------------
  */
+// ============================================================
+// IGLÚ — BRANCH OPERATIONS CONSOLE
+// FRONTEND API CONFIGURATION
+// ============================================================
 
-// ============================================================
-// CONFIGURATION — REPLACE WITH YOUR APPS SCRIPT WEB APP URL
-// ============================================================
-const API_URL = "https://script.google.com/macros/s/AKfycbxUhA2ezIcOUXl6_LmSMFEvenQyaQffJzfvfB8bLI7QNafhZ52xjpf4bsXCyZ7EQ9cclg/exec";
+// IMPORTANT:
+// This must be the deployed Google Apps Script Web App URL.
+// Do NOT use Markdown link syntax such as [URL](URL).
+const API_URL =
+    "https://script.google.com/macros/s/AKfycbxUhA2ezIcOUXl6_LmSMFEvenQyaQffJzfvfB8bLI7QNafhZ52xjpf4bsXCyZ7EQ9cclg/exec";
+
 
 // ============================================================
 // STATE
 // ============================================================
-let currentUser = null; // { role, name, username, employeeId?, branchId?, position? }
+
+let currentUser = null;
+// { role, name, username, employeeId?, branchId?, position? }
+
 let cashierItems = [];
 let itemCounter = 0;
+
 let branchesCache = [];
 let employeesCache = [];
+
 let charts = {};
 
-const PRODUCT_SIZES = ['8 oz', '12 oz', '16 oz', '22 oz'];
+const PRODUCT_SIZES = [
+    "8 oz",
+    "12 oz",
+    "16 oz",
+    "22 oz"
+];
+
 
 // ============================================================
-// API HELPER — the ONLY way the frontend talks to the backend
+// API HELPER
+// The ONLY way the frontend talks to the backend
 // ============================================================
+
 async function apiCall(action, payload = {}) {
-  if (!API_URL || API_URL.indexOf('https://script.google.com/macros/s/AKfycbxUhA2ezIcOUXl6_LmSMFEvenQyaQffJzfvfB8bLI7QNafhZ52xjpf4bsXCyZ7EQ9cclg/exec') === 0) {
-    showToast('API_URL is not configured yet. Edit script.js.', 'error');
-    return { success: false, message: 'API_URL not configured.' };
-  }
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(Object.assign({ action }, payload))
-    });
-    return await response.json();
-  } catch (err) {
-    showToast('Network error contacting the API.', 'error');
-    return { success: false, message: 'Network error: ' + err.message };
-  }
+
+    // --------------------------------------------------------
+    // Validate API URL
+    // --------------------------------------------------------
+
+    if (!API_URL || API_URL.trim() === "") {
+
+        showToast(
+            "API_URL is not configured yet. Edit script.js.",
+            "error"
+        );
+
+        return {
+            success: false,
+            message: "API_URL not configured."
+        };
+    }
+
+
+    // --------------------------------------------------------
+    // Send request to Google Apps Script
+    // --------------------------------------------------------
+
+    try {
+
+        const response = await fetch(API_URL, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+
+            body: JSON.stringify({
+                action: action,
+                ...payload
+            })
+
+        });
+
+
+        // ----------------------------------------------------
+        // Check HTTP response
+        // ----------------------------------------------------
+
+        if (!response.ok) {
+
+            throw new Error(
+                "HTTP " +
+                response.status +
+                " " +
+                response.statusText
+            );
+
+        }
+
+
+        // ----------------------------------------------------
+        // Convert response to JSON
+        // ----------------------------------------------------
+
+        const data = await response.json();
+
+        return data;
+
+    } catch (err) {
+
+        console.error(
+            "IGLÚ API Error:",
+            err
+        );
+
+
+        showToast(
+            "Network error contacting the API.",
+            "error"
+        );
+
+
+        return {
+            success: false,
+            message: "Network error: " + err.message
+        };
+
+    }
+
 }
+
+
+// ============================================================
+// OPTIONAL API TEST
+// Useful for debugging the Apps Script connection
+// ============================================================
+
+async function testApiConnection() {
+
+    console.log(
+        "IGLÚ API URL:",
+        API_URL
+    );
+
+
+    if (!API_URL || API_URL.trim() === "") {
+
+        console.error(
+            "API_URL is empty."
+        );
+
+        return {
+            success: false,
+            message: "API_URL is empty."
+        };
+
+    }
+
+
+    try {
+
+        const response = await fetch(API_URL, {
+            method: "GET"
+        });
+
+
+        console.log(
+            "API HTTP Status:",
+            response.status
+        );
+
+
+        const text = await response.text();
+
+        console.log(
+            "API Response:",
+            text
+        );
+
+
+        return {
+            success: true,
+            status: response.status,
+            response: text
+        };
+
+    } catch (error) {
+
+        console.error(
+            "API connection test failed:",
+            error
+        );
+
+
+        return {
+            success: false,
+            message: error.message
+        };
+
+    }
+
+}
+
+
+// ============================================================
+// DEBUG INFORMATION
+// ============================================================
+
+console.log(
+    "IGLÚ script.js loaded."
+);
+
+console.log(
+    "API_URL configured:",
+    !!API_URL
+);
+
+console.log(
+    "API_URL:",
+    API_URL
+);
 
 // ============================================================
 // TOASTS
