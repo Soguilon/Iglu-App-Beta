@@ -12,6 +12,28 @@
   --shadow-sm: 0 2px 8px rgba(10, 165, 184, 0.08);
   --shadow-md: 0 8px 24px rgba(10, 165, 184, 0.12);
   --radius: 14px;
+
+  /* ============ NEW: COMPLEMENTARY ACCENT COLORS ============ */
+  /* Warm accent (complementary to cyan — highlights, promos, CTAs) */
+  --iglu-coral: #ff6b5e;
+  --iglu-coral-dark: #e0503f;
+  --iglu-coral-light: #ffe9e6;
+
+  /* Amber (warnings, pending states, "needs attention") */
+  --iglu-amber: #f5a623;
+  --iglu-amber-dark: #d4880f;
+  --iglu-amber-light: #fef3e0;
+
+  /* Violet (premium/admin roles, secondary brand accent) */
+  --iglu-violet: #7c6adb;
+  --iglu-violet-dark: #5f4dc4;
+  --iglu-violet-light: #ede9fb;
+
+  /* Extra neutral grays (muted UI, dividers, disabled states) */
+  --iglu-gray-100: #f4f6f7;
+  --iglu-gray-300: #d8e0e2;
+  --iglu-gray-500: #8a9ba1;
+  --iglu-gray-700: #3f5359;
 }
 
 * { box-sizing: border-box; }
@@ -275,3 +297,71 @@ h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; font-weight: 800; color: va
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
+/* ============================================================
+   NEW ADDITIONS BELOW — nothing above this line was changed
+   ============================================================ */
+
+/* Status pill: pending/warning state (amber) — complements existing
+   .status-active (green) and .status-disabled (red) */
+.status-pending { background: var(--iglu-amber-light); color: var(--iglu-amber-dark); }
+
+/* Coral variant — for promos, featured items, or an alternate/warmer
+   danger-adjacent action that isn't as harsh as red */
+.status-coral { background: var(--iglu-coral-light); color: var(--iglu-coral-dark); }
+
+/* Role badges — e.g. for .sidebar-user-role or table rows, to visually
+   differentiate user types without touching the base sidebar styles */
+.badge-role {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-role-admin { background: var(--iglu-violet-light); color: var(--iglu-violet-dark); }
+.badge-role-staff { background: var(--iglu-cyan-light); color: var(--iglu-cyan-dark); }
+.badge-role-cashier { background: var(--iglu-amber-light); color: var(--iglu-amber-dark); }
+
+/* Coral button — for promo CTAs or "featured" actions, alongside
+   the existing .btn-iglu / .btn-outline-iglu */
+.btn-coral {
+  background: linear-gradient(135deg, var(--iglu-coral), var(--iglu-coral-dark));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 18px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-coral:hover { color: #fff; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+/* Violet button — secondary accent action */
+.btn-violet {
+  background: linear-gradient(135deg, var(--iglu-violet), var(--iglu-violet-dark));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 10px 18px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-violet:hover { color: #fff; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+/* Featured/promo stat card accent — pairs with existing .stat-card,
+   just swaps the icon accent color to coral for standout KPIs */
+.stat-card.stat-card-accent-coral i { color: var(--iglu-coral); background: var(--iglu-coral-light); }
+.stat-card.stat-card-accent-amber i { color: var(--iglu-amber); background: var(--iglu-amber-light); }
+.stat-card.stat-card-accent-violet i { color: var(--iglu-violet); background: var(--iglu-violet-light); }
+
+/* Neutral gray utility classes — extra steps beyond --iglu-blue-gray,
+   useful for disabled states, zebra striping, subtle dividers */
+.bg-iglu-gray-100 { background: var(--iglu-gray-100); }
+.bg-iglu-gray-300 { background: var(--iglu-gray-300); }
+.text-iglu-gray-500 { color: var(--iglu-gray-500); }
+.text-iglu-gray-700 { color: var(--iglu-gray-700); }
+
+/* Amber toast variant — alongside existing .iglu-toast.error / .success */
+.iglu-toast.warning { border-left-color: var(--iglu-amber); }
